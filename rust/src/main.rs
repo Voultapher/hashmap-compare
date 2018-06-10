@@ -1,11 +1,27 @@
 #![feature(test)]
 
+extern crate rand;
 extern crate test;
+extern crate fnv;
 
+use rand::{Rng, thread_rng};
+#[cfg(feature = "use_fnv")] use fnv::FnvBuildHasher;
 use std::collections::HashMap;
 
-pub fn fill_linear_n(n: i32) -> HashMap<i32, i32> {
-    let mut hm = HashMap::new();
+
+#[cfg(feature = "use_fnv")]
+pub type HashMapT<K, V> = HashMap<K, V, FnvBuildHasher>;
+
+
+#[cfg(not(feature = "use_fnv"))] pub type HashMapT<K, V> = HashMap<K, V>;
+
+pub fn fill_linear_n(n: i32) -> HashMapT<i32, i32> {
+    let mut hm = HashMapT::default();
+
+    if cfg!(feature = "reserve_hm") {
+        hm.reserve(n as usize);
+    }
+
     for i in 0..n {
         hm.insert(i, i);
     }
@@ -18,12 +34,61 @@ pub fn fill_linear_n_lookup_one(n: i32) {
 
 pub fn fill_linear_n_lookup_all(n: i32) {
     let hm = fill_linear_n(n);
+
     for i in 0..n {
         hm.get(&i).unwrap();
     }
 }
 
-// missing traversal and other key and value types
+pub fn fill_linear_n_insert_random(n: i32) {
+    let mut hm = fill_linear_n(n);
+    let mut rng = thread_rng();
+
+    for i in 0..n {
+        hm.insert(rng.gen_range(0, n), i);
+    }
+}
+
+pub fn fill_linear_n_lookup_random(n: i32) {
+    let hm = fill_linear_n(n);
+    let mut rng = thread_rng();
+
+    for _ in 0..n {
+        hm.get(&rng.gen_range(0, n));
+    }
+}
+
+pub fn fill_linear_n_lookup_missing(n: i32) {
+    let hm = fill_linear_n(n);
+    let mut rng = thread_rng();
+
+    for _ in 0..n {
+        hm.get(&rng.gen_range(n, n*2));
+    }
+}
+
+pub fn fill_linear_n_copy_element_wise(n: i32) {
+    let hm = fill_linear_n(n);
+
+    let mut hm_copy = HashMapT::default();
+    if cfg!(feature = "reserve_hm") {
+        hm_copy.reserve(n as usize);
+    }
+
+    for (key, val) in hm {
+        hm_copy.insert(key, val);
+    }
+}
+
+pub fn fill_linear_n_traversal(n: i32) {
+    let hm = fill_linear_n(n);
+
+    for (key, val) in hm {
+        let _ = (key, val);
+    }
+}
+
+// missing other key and value types
 
 #[cfg(test)]
 mod tests {
@@ -31,14 +96,19 @@ mod tests {
     use test::Bencher;
 
     const SMALL_N: i32 = 10;
-    const MEDIUM_N: i32 = 100;
-    const LARGE_N: i32 = 1_000;
-    const BIG_N: i32 = 10_000;
+    //const MEDIUM_N: i32 = 100;
+    //const LARGE_N: i32 = 1_000;
+    //const BIG_N: i32 = 10_000;
 
     #[test]
     fn fill_linear_n_works() {
         let target_n = SMALL_N / 2;
         assert_eq!(&target_n, fill_linear_n(SMALL_N).get(&target_n).unwrap());
+    }
+
+    #[bench]
+    fn small_fill_only(b: &mut Bencher) {
+        b.iter(|| fill_linear_n(SMALL_N));
     }
 
     #[bench]
@@ -52,33 +122,28 @@ mod tests {
     }
 
     #[bench]
-    fn medium_lookup_one(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_one(MEDIUM_N));
+    fn small_insert_random(b: &mut Bencher) {
+        b.iter(|| fill_linear_n_insert_random(SMALL_N));
     }
 
     #[bench]
-    fn medium_lookup_all(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_all(MEDIUM_N));
+    fn small_lookup_random(b: &mut Bencher) {
+        b.iter(|| fill_linear_n_lookup_random(SMALL_N));
     }
 
     #[bench]
-    fn large_lookup_one(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_one(LARGE_N));
+    fn small_lookup_missing(b: &mut Bencher) {
+        b.iter(|| fill_linear_n_lookup_missing(SMALL_N));
     }
 
     #[bench]
-    fn large_lookup_all(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_all(LARGE_N));
+    fn small_copy_element_wise(b: &mut Bencher) {
+        b.iter(|| fill_linear_n_copy_element_wise(SMALL_N));
     }
 
     #[bench]
-    fn big_lookup_one(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_one(BIG_N));
-    }
-
-    #[bench]
-    fn big_lookup_all(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_all(BIG_N));
+    fn small_traversal(b: &mut Bencher) {
+        b.iter(|| fill_linear_n_traversal(SMALL_N));
     }
 }
 
