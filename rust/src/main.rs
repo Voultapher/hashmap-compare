@@ -1,19 +1,28 @@
 #![feature(test)]
 
+extern crate fnv;
+extern crate murmur3;
 extern crate rand;
 extern crate test;
-extern crate fnv;
+
+use std::collections::HashMap;
 
 use rand::{Rng, thread_rng};
+
 #[cfg(feature = "use_fnv")] use fnv::FnvBuildHasher;
-use std::collections::HashMap;
+
+#[cfg(feature = "use_murmur")] use std::hash::BuildHasherDefault;
+#[cfg(feature = "use_murmur")] use murmur3::murmur3_32::MurmurHasher;
 
 
 #[cfg(feature = "use_fnv")]
 pub type HashMapT<K, V> = HashMap<K, V, FnvBuildHasher>;
 
+#[cfg(feature = "use_murmur")]
+pub type HashMapT<K, V> = HashMap<K, V,  BuildHasherDefault<MurmurHasher>>;
 
-#[cfg(not(feature = "use_fnv"))] pub type HashMapT<K, V> = HashMap<K, V>;
+#[cfg(not(any(feature = "use_fnv", feature = "use_murmur")))]
+pub type HashMapT<K, V> = HashMap<K, V>;
 
 pub fn fill_linear_n(n: i32) -> HashMapT<i32, i32> {
     let mut hm = HashMapT::default();

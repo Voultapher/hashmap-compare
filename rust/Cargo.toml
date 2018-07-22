@@ -6,10 +6,12 @@ authors = ["Lukas Bergdoll <lukas.bergdoll@gmail.com>"]
 [dependencies]
 rand = "0.5.1"
 fnv = "1.0.3"
+murmur3 = "0.4.1"
 
 [features]
 default = []
 #default = ["use_fnv", "reserve_hm"]
 
 use_fnv = [] # replace default hash with fnv
+use_murmur = [] # replace default hash with fnv
 reserve_hm = [] # reserve after creating hash map
