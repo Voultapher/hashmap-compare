@@ -24,7 +24,11 @@ pub type HashMapT<K, V> = HashMap<K, V,  BuildHasherDefault<MurmurHasher>>;
 #[cfg(not(any(feature = "use_fnv", feature = "use_murmur")))]
 pub type HashMapT<K, V> = HashMap<K, V>;
 
-pub fn fill_linear_n(n: i32) -> HashMapT<i32, i32> {
+// TODO other key and value types
+pub type KeyT = i32;
+pub type ValueT = i32;
+
+pub fn fill_linear_n(n: i32) -> HashMapT<KeyT, ValueT> {
     let mut hm = HashMapT::default();
 
     if cfg!(feature = "reserve_hm") {
@@ -32,20 +36,20 @@ pub fn fill_linear_n(n: i32) -> HashMapT<i32, i32> {
     }
 
     for i in 0..n {
-        hm.insert(i, i);
+        hm.insert(KeyT::from(i), ValueT::from(i));
     }
     hm
 }
 
 pub fn fill_linear_n_lookup_one(n: i32) {
-    fill_linear_n(n).get(&(n / 2)).unwrap();
+    fill_linear_n(n).get(&(KeyT::from(n / 2))).unwrap();
 }
 
 pub fn fill_linear_n_lookup_all(n: i32) {
     let hm = fill_linear_n(n);
 
     for i in 0..n {
-        hm.get(&i).unwrap();
+        hm.get(&KeyT::from(i)).unwrap();
     }
 }
 
@@ -54,7 +58,7 @@ pub fn fill_linear_n_insert_random(n: i32) {
     let mut rng = thread_rng();
 
     for i in 0..n {
-        hm.insert(rng.gen_range(0, n), i);
+        hm.insert(KeyT::from(rng.gen_range(0, n)), ValueT::from(i));
     }
 }
 
@@ -63,7 +67,7 @@ pub fn fill_linear_n_lookup_random(n: i32) {
     let mut rng = thread_rng();
 
     for _ in 0..n {
-        hm.get(&rng.gen_range(0, n));
+        hm.get(&KeyT::from(rng.gen_range(0, n)));
     }
 }
 
@@ -72,7 +76,7 @@ pub fn fill_linear_n_lookup_missing(n: i32) {
     let mut rng = thread_rng();
 
     for _ in 0..n {
-        hm.get(&rng.gen_range(n, n*2));
+        hm.get(&KeyT::from(rng.gen_range(n, n*2)));
     }
 }
 
@@ -96,8 +100,6 @@ pub fn fill_linear_n_traversal(n: i32) {
         let _ = (key, val);
     }
 }
-
-// missing other key and value types
 
 #[cfg(test)]
 mod tests {
