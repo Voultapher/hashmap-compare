@@ -104,57 +104,66 @@ pub fn fill_linear_n_traversal(n: i32) {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use test::Bencher;
+    const TINY_N: i32 = 10;
+    const SMALL_N: i32 = 100;
+    const MEDIUM_N: i32 = 1_000;
+    const LARGE_N: i32 = 10_000;
+    const BIG_N: i32 = 100_000;
 
-    const SMALL_N: i32 = 10;
-    //const MEDIUM_N: i32 = 100;
-    //const LARGE_N: i32 = 1_000;
-    //const BIG_N: i32 = 10_000;
+    macro_rules! make_benchmark_impl {
+        ($name:ident, $benchmark:expr, $size:ident) => {
+            #[bench]
+            fn $name(b: &mut Bencher) {
+                b.iter(|| $benchmark(test::black_box($size)));
+            }
+        }
+    }
+
+    macro_rules! make_benchmarks {
+        {$($name:ident: $benchmark:expr),*} => {
+            mod tiny {
+                use super::*;
+                use test::Bencher;
+                $(make_benchmark_impl!($name, $benchmark, TINY_N);)*
+            }
+            mod small {
+                use super::*;
+                use test::Bencher;
+                $(make_benchmark_impl!($name, $benchmark, SMALL_N);)*
+            }
+            mod medium {
+                use super::*;
+                use test::Bencher;
+                $(make_benchmark_impl!($name, $benchmark, MEDIUM_N);)*
+            }
+            mod large {
+                use super::*;
+                use test::Bencher;
+                $(make_benchmark_impl!($name, $benchmark, LARGE_N);)*
+            }
+            mod big {
+                use super::*;
+                use test::Bencher;
+                $(make_benchmark_impl!($name, $benchmark, BIG_N);)*
+            }
+        }
+    }
 
     #[test]
     fn fill_linear_n_works() {
-        let target_n = SMALL_N / 2;
-        assert_eq!(&target_n, fill_linear_n(SMALL_N).get(&target_n).unwrap());
+        let target_n = TINY_N / 2;
+        assert_eq!(&target_n, fill_linear_n(TINY_N).get(&target_n).unwrap());
     }
 
-    #[bench]
-    fn small_fill_only(b: &mut Bencher) {
-        b.iter(|| fill_linear_n(SMALL_N));
-    }
-
-    #[bench]
-    fn small_lookup_one(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_one(SMALL_N));
-    }
-
-    #[bench]
-    fn small_lookup_all(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_all(SMALL_N));
-    }
-
-    #[bench]
-    fn small_insert_random(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_insert_random(SMALL_N));
-    }
-
-    #[bench]
-    fn small_lookup_random(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_random(SMALL_N));
-    }
-
-    #[bench]
-    fn small_lookup_missing(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_lookup_missing(SMALL_N));
-    }
-
-    #[bench]
-    fn small_copy_element_wise(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_copy_element_wise(SMALL_N));
-    }
-
-    #[bench]
-    fn small_traversal(b: &mut Bencher) {
-        b.iter(|| fill_linear_n_traversal(SMALL_N));
+    make_benchmarks!{
+        copy_element_wise: fill_linear_n_copy_element_wise,
+        fill_only: fill_linear_n,
+        insert_random: fill_linear_n_insert_random,
+        lookup_all: fill_linear_n_lookup_all,
+        lookup_missing: fill_linear_n_lookup_missing,
+        lookup_one: fill_linear_n_lookup_one,
+        lookup_random: fill_linear_n_lookup_random,
+        traversal: fill_linear_n_traversal
     }
 }
 
