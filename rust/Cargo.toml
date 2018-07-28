@@ -15,3 +15,6 @@ default = []
 use_fnv = [] # replace default hash with fnv
 use_murmur = [] # replace default hash with fnv
 reserve_hm = [] # reserve after creating hash map
+string_key = [] # use string as key type
+string_value = [] # use string as value type
+string_pad = [] # pad string created from i32

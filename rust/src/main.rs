@@ -24,8 +24,33 @@ pub type HashMapT<K, V> = HashMap<K, V,  BuildHasherDefault<MurmurHasher>>;
 #[cfg(not(any(feature = "use_fnv", feature = "use_murmur")))]
 pub type HashMapT<K, V> = HashMap<K, V>;
 
-// TODO other key and value types
+#[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Hash)]
+pub struct CustomString(String);
+
+impl From<i32> for CustomString {
+    #[cfg(feature = "string_pad")]
+    fn from(v: i32) -> CustomString {
+        let mut s = v.to_string();
+        s.push_str("0_1_2_3_4_5_6_7_"); // padding
+        CustomString(s)
+    }
+
+    #[cfg(not(feature = "string_pad"))]
+    fn from(v: i32) -> CustomString {
+        CustomString(v.to_string())
+    }
+}
+
+#[cfg(feature = "string_key")]
+pub type KeyT = CustomString;
+
+#[cfg(not(feature = "string_key"))]
 pub type KeyT = i32;
+
+#[cfg(feature = "string_value")]
+pub type ValueT = CustomString;
+
+#[cfg(not(feature = "string_value"))]
 pub type ValueT = i32;
 
 pub fn fill_linear_n(n: i32) -> HashMapT<KeyT, ValueT> {
@@ -147,12 +172,6 @@ mod tests {
                 $(make_benchmark_impl!($name, $benchmark, BIG_N);)*
             }
         }
-    }
-
-    #[test]
-    fn fill_linear_n_works() {
-        let target_n = TINY_N / 2;
-        assert_eq!(&target_n, fill_linear_n(TINY_N).get(&target_n).unwrap());
     }
 
     make_benchmarks!{
