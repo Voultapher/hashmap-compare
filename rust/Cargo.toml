@@ -9,11 +9,12 @@ fnv = "1.0.3"
 murmur3 = "0.4.1"
 
 [features]
-default = []
-#default = ["use_fnv", "reserve_hm"]
+default = ["sip_hash"]
+#default = ["fnv_hash", "reserve_hm"]
 
-use_fnv = [] # replace default hash with fnv
-use_murmur = [] # replace default hash with fnv
+sip_hash = [] # default rust HashMap hash
+fnv_hash = [] # replace default hash with fnv
+murmur_hash = [] # replace default hash with fnv
 reserve_hm = [] # reserve after creating hash map
 string_key = [] # use string as key type
 string_value = [] # use string as value type

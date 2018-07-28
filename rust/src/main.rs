@@ -9,19 +9,19 @@ use std::collections::HashMap;
 
 use rand::{Rng, thread_rng};
 
-#[cfg(feature = "use_fnv")] use fnv::FnvBuildHasher;
+#[cfg(feature = "fnv_hash")] use fnv::FnvBuildHasher;
 
-#[cfg(feature = "use_murmur")] use std::hash::BuildHasherDefault;
-#[cfg(feature = "use_murmur")] use murmur3::murmur3_32::MurmurHasher;
+#[cfg(feature = "murmur_hash")] use std::hash::BuildHasherDefault;
+#[cfg(feature = "murmur_hash")] use murmur3::murmur3_32::MurmurHasher;
 
 
-#[cfg(feature = "use_fnv")]
+#[cfg(feature = "fnv_hash")]
 pub type HashMapT<K, V> = HashMap<K, V, FnvBuildHasher>;
 
-#[cfg(feature = "use_murmur")]
+#[cfg(feature = "murmur_hash")]
 pub type HashMapT<K, V> = HashMap<K, V,  BuildHasherDefault<MurmurHasher>>;
 
-#[cfg(not(any(feature = "use_fnv", feature = "use_murmur")))]
+#[cfg(not(any(feature = "fnv_hash", feature = "murmur_hash")))]
 pub type HashMapT<K, V> = HashMap<K, V>;
 
 #[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Hash)]
