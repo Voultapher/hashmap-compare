@@ -60,7 +60,7 @@ static auto fill_linear_n_insert_random(const int32_t n) -> int32_t
       ++ret;
     }
   }
-  return ret;
+  return ret + static_cast<int32_t>(hm.size());
 }
 
 static auto fill_linear_n_lookup_random(const int32_t n) -> int32_t
