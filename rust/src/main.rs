@@ -66,46 +66,67 @@ pub fn fill_linear_n(n: i32) -> HashMapT<KeyT, ValueT> {
     hm
 }
 
-pub fn fill_linear_n_lookup_one(n: i32) {
-    fill_linear_n(n).get(&(KeyT::from(n / 2))).unwrap();
+pub fn fill_linear_n_lookup_one(n: i32) -> ValueT {
+    fill_linear_n(n).get(&(KeyT::from(n / 2))).unwrap().clone()
 }
 
-pub fn fill_linear_n_lookup_all(n: i32) {
+pub fn fill_linear_n_lookup_all(n: i32) -> i32 {
     let hm = fill_linear_n(n);
 
+    let mut ret: i32 = 0;
     for i in 0..n {
-        hm.get(&KeyT::from(i)).unwrap();
+        if let Some(_) = hm.get(&KeyT::from(i)) {
+            ret += 1;
+        }
     }
+    ret
 }
 
-pub fn fill_linear_n_insert_random(n: i32) {
+// TODO fill random from empty
+
+// TODO explicit rehash
+
+pub fn fill_linear_n_insert_random(n: i32) -> i32 {
     let mut hm = fill_linear_n(n);
     let mut rng = thread_rng();
 
+    let mut ret: i32 = 0;
     for i in 0..n {
         hm.insert(KeyT::from(rng.gen_range(0, n)), ValueT::from(i));
+        if rng.gen_range(0, n) < (n / 2) {
+            ret += 1;
+        }
     }
+    ret + hm.len() as i32
 }
 
-pub fn fill_linear_n_lookup_random(n: i32) {
+pub fn fill_linear_n_lookup_random(n: i32) -> i32 {
     let hm = fill_linear_n(n);
     let mut rng = thread_rng();
 
+    let mut ret: i32 = 0;
     for _ in 0..n {
-        hm.get(&KeyT::from(rng.gen_range(0, n)));
+        if let Some(_) = hm.get(&KeyT::from(rng.gen_range(0, n))) {
+            ret += 1;
+        }
     }
+    ret
 }
 
-pub fn fill_linear_n_lookup_missing(n: i32) {
+pub fn fill_linear_n_lookup_missing(n: i32) -> i32 {
     let hm = fill_linear_n(n);
     let mut rng = thread_rng();
 
+    let mut ret: i32 = 0;
     for _ in 0..n {
-        hm.get(&KeyT::from(rng.gen_range(n, n*2)));
+        if let Some(_) = hm.get(&KeyT::from(rng.gen_range(n, n*2))) {
+            ret += 1;
+        }
     }
+    ret
 }
 
-pub fn fill_linear_n_copy_element_wise(n: i32) {
+pub fn fill_linear_n_copy_element_wise(n: i32) -> i32 {
     let hm = fill_linear_n(n);
 
     let mut hm_copy = HashMapT::default();
@@ -116,14 +137,30 @@ pub fn fill_linear_n_copy_element_wise(n: i32) {
     for (key, val) in hm {
         hm_copy.insert(key, val);
     }
+
+    hm_copy.len() as i32
 }
 
-pub fn fill_linear_n_traversal(n: i32) {
+pub fn fill_linear_n_traversal(n: i32) -> i32 {
     let hm = fill_linear_n(n);
 
-    for (key, val) in hm {
-        let _ = (key, val);
+    let mut ret: i32 = 0;
+    for (_key, _val) in hm {
+        ret += 1;
     }
+    ret
+}
+
+pub fn random_gen_only(n: i32) -> i32 {
+    let mut rng = thread_rng();
+
+    let mut ret: i32 = 0;
+    for _ in 0..n {
+        if rng.gen_range(0, n) < (n / 2) {
+            ret += 1;
+        }
+    }
+    ret
 }
 
 #[cfg(test)]
@@ -182,7 +219,8 @@ mod tests {
         lookup_missing: fill_linear_n_lookup_missing,
         lookup_one: fill_linear_n_lookup_one,
         lookup_random: fill_linear_n_lookup_random,
-        traversal: fill_linear_n_traversal
+        traversal: fill_linear_n_traversal,
+        random: random_gen_only
     }
 }
 
