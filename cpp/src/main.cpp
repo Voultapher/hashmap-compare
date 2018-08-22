@@ -14,134 +14,135 @@ template<typename K, typename V> using HashMapT = std::unordered_map<K, V>;
 
 static auto fill_linear_n(const int32_t n) -> HashMapT<KeyT, ValueT>
 {
-  HashMapT<KeyT, ValueT> hm{};
+    HashMapT<KeyT, ValueT> hm{};
 
-  for (int32_t i = 0; i < n; ++i)
-  {
-    hm.insert({static_cast<KeyT>(i), static_cast<ValueT>(i)});
-  }
+    for (int32_t i = 0; i < n; ++i)
+    {
+        hm.insert({static_cast<KeyT>(i), static_cast<ValueT>(i)});
+    }
 
-  return hm;
+    return hm;
 }
 
 static auto fill_linear_n_lookup_one(const int32_t n) -> ValueT
 {
-  return fill_linear_n(n).find(static_cast<KeyT>(n / 2))->second;
+    return fill_linear_n(n).find(static_cast<KeyT>(n / 2))->second;
 }
 
 static auto fill_linear_n_lookup_all(const int32_t n) -> int32_t
 {
-  const auto hm = fill_linear_n(n);
+    const auto hm = fill_linear_n(n);
 
-  int32_t side_effect = 0;
-  for (int32_t i = 0; i < n; ++i)
-  {
-    const auto it = hm.find(static_cast<KeyT>(i));
-    if (it != std::end(hm))
+    int32_t side_effect = 0;
+    for (int32_t i = 0; i < n; ++i)
     {
-      ++side_effect;
+        const auto it = hm.find(static_cast<KeyT>(i));
+        if (it != std::end(hm))
+        {
+            ++side_effect;
+        }
     }
-  }
-  return side_effect;
+    return side_effect;
 }
 
 static auto fill_linear_n_insert_random(const int32_t n) -> int32_t
 {
-  auto hm = fill_linear_n(n);
-  std::uniform_int_distribution<int32_t> dis(0, n);
+    auto hm = fill_linear_n(n);
+    std::uniform_int_distribution<int32_t> dis(0, n);
 
-  int32_t side_effect = 0;
-  for (int32_t i = 0; i < n; ++i)
-  {
-    const auto rand_int = dis(thread_rng);
-    hm.insert({static_cast<KeyT>(rand_int), static_cast<ValueT>(i)});
-    if (dis(thread_rng) < (n / 2))
+    int32_t side_effect = 0;
+    for (int32_t i = 0; i < n; ++i)
     {
-      ++side_effect;
+        const auto rand_int = dis(thread_rng);
+        hm.insert({static_cast<KeyT>(rand_int), static_cast<ValueT>(i)});
+        if (dis(thread_rng) < (n / 2))
+        {
+            ++side_effect;
+        }
     }
-  }
-  return side_effect + static_cast<int32_t>(hm.size());
+    return side_effect + static_cast<int32_t>(hm.size());
 }
 
 static auto fill_linear_n_lookup_random(const int32_t n) -> int32_t
 {
-  const auto hm = fill_linear_n(n);
-  std::uniform_int_distribution<int32_t> dis(0, n);
+    const auto hm = fill_linear_n(n);
+    std::uniform_int_distribution<int32_t> dis(0, n);
 
-  int32_t side_effect = 0;
-  for (int32_t i = 0; i < n; ++i)
-  {
-    const auto it = hm.find(dis(thread_rng));
-    if (it == std::end(hm))
+    int32_t side_effect = 0;
+    for (int32_t i = 0; i < n; ++i)
     {
-      ++side_effect;
+        const auto it = hm.find(dis(thread_rng));
+        if (it == std::end(hm))
+        {
+            ++side_effect;
+        }
     }
-  }
-  return side_effect;
+    return side_effect;
 }
 
 static auto fill_linear_n_lookup_missing(const int32_t n) -> int32_t
 {
-  const auto hm = fill_linear_n(n);
-  std::uniform_int_distribution<int32_t> dis(n, n*2);
+    const auto hm = fill_linear_n(n);
+    std::uniform_int_distribution<int32_t> dis(n, n*2);
 
-  int32_t side_effect = 0;
-  for (int32_t i = 0; i < n; ++i)
-  {
-    const auto it = hm.find(dis(thread_rng));
-    if (it == std::end(hm))
+    int32_t side_effect = 0;
+    for (int32_t i = 0; i < n; ++i)
     {
-      ++side_effect;
+        const auto it = hm.find(dis(thread_rng));
+        if (it == std::end(hm))
+        {
+            ++side_effect;
+        }
     }
-  }
-  return side_effect;
+    return side_effect;
 }
 
 static auto random_gen_only(const int32_t n) -> int32_t
 {
-  std::uniform_int_distribution<int32_t> dis(0, n);
+    std::uniform_int_distribution<int32_t> dis(0, n);
 
-  int32_t side_effect = 0;
-  for (int32_t i = 0; i < n; ++i)
-  {
-    if (dis(thread_rng) < (n / 2))
+    int32_t side_effect = 0;
+    for (int32_t i = 0; i < n; ++i)
     {
-      ++side_effect;
+        if (dis(thread_rng) < (n / 2))
+        {
+            ++side_effect;
+        }
     }
-  }
-  return side_effect;
+    return side_effect;
 }
 
 static auto fill_linear_n_copy_element_wise(const int32_t n) -> int32_t
 {
-  const auto hm = fill_linear_n(n);
-  HashMapT<KeyT, ValueT> hm_copy{};
+    const auto hm = fill_linear_n(n);
+    HashMapT<KeyT, ValueT> hm_copy{};
 
-  for (const auto [key, val] : hm)
-  {
-    hm_copy.insert({key, val});
-  }
-  return static_cast<int32_t>(hm_copy.size());
+    for (const auto [key, val] : hm)
+    {
+        hm_copy.insert({key, val});
+    }
+    return static_cast<int32_t>(hm_copy.size());
 }
 
 static auto fill_linear_n_traversal(const int32_t n) -> int32_t
 {
-  const auto hm = fill_linear_n(n);
+    const auto hm = fill_linear_n(n);
 
-  int32_t side_effect = 0;
-  for (const auto [key, value] : hm)
-  {
-    ++side_effect;
-  }
-  return side_effect;
+    int32_t side_effect = 0;
+    for (const auto [key, value] : hm)
+    {
+        ++side_effect;
+    }
+    return side_effect;
 }
 
 #define MAKE_BENCHMARK(name, func) \
-static void name(benchmark::State& state) { \
-  for (auto _ : state) \
-  { \
-    benchmark::DoNotOptimize(func(state.range(0))); \
-  } \
+static void name(benchmark::State& state) \
+{ \
+    for (auto _ : state) \
+    { \
+        benchmark::DoNotOptimize(func(state.range(0))); \
+    } \
 } \
 BENCHMARK(name)->RangeMultiplier(10)->Range(10, 100'000);
 
