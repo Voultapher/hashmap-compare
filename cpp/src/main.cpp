@@ -117,9 +117,9 @@ static auto fill_linear_n_copy_element_wise(const int32_t n) -> int32_t
     const auto hm = fill_linear_n(n);
     HashMapT<KeyT, ValueT> hm_copy{};
 
-    for (const auto [key, val] : hm)
+    for (const auto [key, value] : hm)
     {
-        hm_copy.insert({key, val});
+        hm_copy.insert({key, value});
     }
     return static_cast<int32_t>(hm_copy.size());
 }

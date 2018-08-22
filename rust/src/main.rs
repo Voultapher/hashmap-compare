@@ -134,8 +134,8 @@ pub fn fill_linear_n_copy_element_wise(n: i32) -> i32 {
         hm_copy.reserve(n as usize);
     }
 
-    for (key, val) in hm {
-        hm_copy.insert(key, val);
+    for (key, value) in hm {
+        hm_copy.insert(key, value);
     }
 
     hm_copy.len() as i32
@@ -145,7 +145,7 @@ pub fn fill_linear_n_traversal(n: i32) -> i32 {
     let hm = fill_linear_n(n);
 
     let mut side_effect: i32 = 0;
-    for (_key, _val) in hm {
+    for (_key, _value) in hm {
         side_effect += 1;
     }
     side_effect
