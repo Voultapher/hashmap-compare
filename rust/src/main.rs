@@ -73,13 +73,13 @@ pub fn fill_linear_n_lookup_one(n: i32) -> ValueT {
 pub fn fill_linear_n_lookup_all(n: i32) -> i32 {
     let hm = fill_linear_n(n);
 
-    let mut ret: i32 = 0;
+    let mut side_effect: i32 = 0;
     for i in 0..n {
         if let Some(_) = hm.get(&KeyT::from(i)) {
-            ret += 1;
+            side_effect += 1;
         }
     }
-    ret
+    side_effect
 }
 
 // TODO fill random from empty
@@ -90,40 +90,40 @@ pub fn fill_linear_n_insert_random(n: i32) -> i32 {
     let mut hm = fill_linear_n(n);
     let mut rng = thread_rng();
 
-    let mut ret: i32 = 0;
+    let mut side_effect: i32 = 0;
     for i in 0..n {
         hm.insert(KeyT::from(rng.gen_range(0, n)), ValueT::from(i));
         if rng.gen_range(0, n) < (n / 2) {
-            ret += 1;
+            side_effect += 1;
         }
     }
-    ret + hm.len() as i32
+    side_effect + hm.len() as i32
 }
 
 pub fn fill_linear_n_lookup_random(n: i32) -> i32 {
     let hm = fill_linear_n(n);
     let mut rng = thread_rng();
 
-    let mut ret: i32 = 0;
+    let mut side_effect: i32 = 0;
     for _ in 0..n {
         if let Some(_) = hm.get(&KeyT::from(rng.gen_range(0, n))) {
-            ret += 1;
+            side_effect += 1;
         }
     }
-    ret
+    side_effect
 }
 
 pub fn fill_linear_n_lookup_missing(n: i32) -> i32 {
     let hm = fill_linear_n(n);
     let mut rng = thread_rng();
 
-    let mut ret: i32 = 0;
+    let mut side_effect: i32 = 0;
     for _ in 0..n {
         if let Some(_) = hm.get(&KeyT::from(rng.gen_range(n, n*2))) {
-            ret += 1;
+            side_effect += 1;
         }
     }
-    ret
+    side_effect
 }
 
 pub fn fill_linear_n_copy_element_wise(n: i32) -> i32 {
@@ -144,23 +144,23 @@ pub fn fill_linear_n_copy_element_wise(n: i32) -> i32 {
 pub fn fill_linear_n_traversal(n: i32) -> i32 {
     let hm = fill_linear_n(n);
 
-    let mut ret: i32 = 0;
+    let mut side_effect: i32 = 0;
     for (_key, _val) in hm {
-        ret += 1;
+        side_effect += 1;
     }
-    ret
+    side_effect
 }
 
 pub fn random_gen_only(n: i32) -> i32 {
     let mut rng = thread_rng();
 
-    let mut ret: i32 = 0;
+    let mut side_effect: i32 = 0;
     for _ in 0..n {
         if rng.gen_range(0, n) < (n / 2) {
-            ret += 1;
+            side_effect += 1;
         }
     }
-    ret
+    side_effect
 }
 
 #[cfg(test)]

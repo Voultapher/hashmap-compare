@@ -33,16 +33,16 @@ static auto fill_linear_n_lookup_all(const int32_t n) -> int32_t
 {
   const auto hm = fill_linear_n(n);
 
-  int32_t ret = 0;
+  int32_t side_effect = 0;
   for (int32_t i = 0; i < n; ++i)
   {
     const auto it = hm.find(static_cast<KeyT>(i));
     if (it != std::end(hm))
     {
-      ++ret;
+      ++side_effect;
     }
   }
-  return ret;
+  return side_effect;
 }
 
 static auto fill_linear_n_insert_random(const int32_t n) -> int32_t
@@ -50,17 +50,17 @@ static auto fill_linear_n_insert_random(const int32_t n) -> int32_t
   auto hm = fill_linear_n(n);
   std::uniform_int_distribution<int32_t> dis(0, n);
 
-  int32_t ret = 0;
+  int32_t side_effect = 0;
   for (int32_t i = 0; i < n; ++i)
   {
     const auto rand_int = dis(thread_rng);
     hm.insert({static_cast<KeyT>(rand_int), static_cast<ValueT>(i)});
     if (dis(thread_rng) < (n / 2))
     {
-      ++ret;
+      ++side_effect;
     }
   }
-  return ret + static_cast<int32_t>(hm.size());
+  return side_effect + static_cast<int32_t>(hm.size());
 }
 
 static auto fill_linear_n_lookup_random(const int32_t n) -> int32_t
@@ -68,16 +68,16 @@ static auto fill_linear_n_lookup_random(const int32_t n) -> int32_t
   const auto hm = fill_linear_n(n);
   std::uniform_int_distribution<int32_t> dis(0, n);
 
-  int32_t ret = 0;
+  int32_t side_effect = 0;
   for (int32_t i = 0; i < n; ++i)
   {
     const auto it = hm.find(dis(thread_rng));
     if (it == std::end(hm))
     {
-      ++ret;
+      ++side_effect;
     }
   }
-  return ret;
+  return side_effect;
 }
 
 static auto fill_linear_n_lookup_missing(const int32_t n) -> int32_t
@@ -85,31 +85,31 @@ static auto fill_linear_n_lookup_missing(const int32_t n) -> int32_t
   const auto hm = fill_linear_n(n);
   std::uniform_int_distribution<int32_t> dis(n, n*2);
 
-  int32_t ret = 0;
+  int32_t side_effect = 0;
   for (int32_t i = 0; i < n; ++i)
   {
     const auto it = hm.find(dis(thread_rng));
     if (it == std::end(hm))
     {
-      ++ret;
+      ++side_effect;
     }
   }
-  return ret;
+  return side_effect;
 }
 
 static auto random_gen_only(const int32_t n) -> int32_t
 {
   std::uniform_int_distribution<int32_t> dis(0, n);
 
-  int32_t ret = 0;
+  int32_t side_effect = 0;
   for (int32_t i = 0; i < n; ++i)
   {
     if (dis(thread_rng) < (n / 2))
     {
-      ++ret;
+      ++side_effect;
     }
   }
-  return ret;
+  return side_effect;
 }
 
 static auto fill_linear_n_copy_element_wise(const int32_t n) -> int32_t
@@ -128,12 +128,12 @@ static auto fill_linear_n_traversal(const int32_t n) -> int32_t
 {
   const auto hm = fill_linear_n(n);
 
-  int32_t ret = 0;
+  int32_t side_effect = 0;
   for (const auto [key, value] : hm)
   {
-    ++ret;
+    ++side_effect;
   }
-  return ret;
+  return side_effect;
 }
 
 #define MAKE_BENCHMARK(name, func) \
