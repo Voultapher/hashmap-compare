@@ -1,4 +1,8 @@
+import std.conv : to;
+import std.datetime.stopwatch : benchmark;
 import std.random : uniform;
+import std.range : repeat, join;
+import std.stdio : writefln;
 
 alias HashMapT(K, V) = V[K];
 
@@ -124,6 +128,80 @@ int fill_linear_n_traversal(const int n)
     return side_effect;
 }
 
+void format_result(string name, long full_time, int size, int repetition_count)
+{
+    const auto average_time = full_time / repetition_count;
+    const auto padding_name = 33 - (name.length + size.to!string.length);
+    const auto padding_time = 13 - (average_time.to!string.length);
+    writefln(
+        "%s/%s%s%d ns%s%d",
+        name,
+        size,
+        " ".repeat(padding_name).join(),
+        average_time,
+        " ".repeat(padding_time).join(),
+        repetition_count
+    );
+}
+
+void DoNotOptimize(T)(T function(const int) fn_ptr, const int size)
+{
+    // Avoid optimizing out code, pin return value as side effect,
+    // should make usage of return value opaque to optimizer,
+    // and so avoid removing 'useless' code.
+    // The function implementation should still be visible to the optimizer.
+    asm
+    {
+        mov EDI, size;
+        call fn_ptr;
+    }
+}
+
+void benchmark_one(T)(
+    T function(const int) func,
+    string name,
+    int size,
+    int repetition_count
+)
+{
+    void fn_bench() { DoNotOptimize(func, size); }
+    const auto result = benchmark!(fn_bench)(repetition_count);
+    format_result(name, result[0].total!"nsecs", size, repetition_count);
+}
+
+void benchmark_size(int size, int repetition_count)
+{
+    const auto rc = repetition_count;
+    benchmark_one(&fill_linear_n, "fill_only", size, rc);
+    benchmark_one(&fill_linear_n_lookup_one, "lookup_one", size, rc);
+    benchmark_one(&fill_linear_n_lookup_all, "lookup_all", size, rc);
+    benchmark_one(&fill_linear_n_lookup_missing, "lookup_missing", size, rc);
+    benchmark_one(&fill_linear_n_lookup_random, "lookup_random", size, rc);
+    benchmark_one(&fill_linear_n_insert_random, "insert_random", size, rc);
+    benchmark_one(&fill_linear_n_traversal, "traversal", size, rc);
+    benchmark_one(&fill_linear_n_copy_element_wise, "copy_element_wise", size, rc);
+    benchmark_one(&random_gen_only, "random_gen", size, rc);
+
+    writefln("");
+}
+
+void benchmark()
+{
+    writefln(
+"-------------------------------------------------------------
+Benchmark                         Time            Iterations
+-------------------------------------------------------------"
+    );
+
+    // Repetition counts are conservative guesses based on running the cpp benchmark
+    benchmark_size(100_000, 150);
+    benchmark_size(10_000, 1_000);
+    benchmark_size(1_000, 10_000);
+    benchmark_size(100, 200_000);
+    benchmark_size(10, 2_000_000);
+
+}
+
 int main()
 {
     const n = 100;
@@ -153,6 +231,8 @@ int main()
 
     const auto side_effect_g = fill_linear_n_traversal(n);
     assert(side_effect_g == n);
+
+    benchmark();
 
     return 0;
 }
