@@ -212,15 +212,15 @@ mod tests {
     }
 
     make_benchmarks!{
-        copy_element_wise: fill_linear_n_copy_element_wise,
         fill_only: fill_linear_n,
-        insert_random: fill_linear_n_insert_random,
+        lookup_one: fill_linear_n_lookup_one,
         lookup_all: fill_linear_n_lookup_all,
         lookup_missing: fill_linear_n_lookup_missing,
-        lookup_one: fill_linear_n_lookup_one,
         lookup_random: fill_linear_n_lookup_random,
+        insert_random: fill_linear_n_insert_random,
         traversal: fill_linear_n_traversal,
-        random: random_gen_only
+        copy_element_wise: fill_linear_n_copy_element_wise,
+        random_gen: random_gen_only
     }
 }
 

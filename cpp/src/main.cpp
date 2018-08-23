@@ -146,12 +146,12 @@ static void name(benchmark::State& state) \
 } \
 BENCHMARK(name)->RangeMultiplier(10)->Range(10, 100'000);
 
-MAKE_BENCHMARK(copy_element_wise, fill_linear_n_copy_element_wise)
 MAKE_BENCHMARK(fill_only, fill_linear_n)
-MAKE_BENCHMARK(insert_random, fill_linear_n_insert_random)
+MAKE_BENCHMARK(lookup_one, fill_linear_n_lookup_one)
 MAKE_BENCHMARK(lookup_all, fill_linear_n_lookup_all)
 MAKE_BENCHMARK(lookup_missing, fill_linear_n_lookup_missing)
-MAKE_BENCHMARK(lookup_one, fill_linear_n_lookup_one)
 MAKE_BENCHMARK(lookup_random, fill_linear_n_lookup_random)
-MAKE_BENCHMARK(random_gen, random_gen_only)
+MAKE_BENCHMARK(insert_random, fill_linear_n_insert_random)
 MAKE_BENCHMARK(traversal, fill_linear_n_traversal)
+MAKE_BENCHMARK(copy_element_wise, fill_linear_n_copy_element_wise)
+MAKE_BENCHMARK(random_gen, random_gen_only)
