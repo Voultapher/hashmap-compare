@@ -4,9 +4,10 @@ version = "0.1.0"
 authors = ["Lukas Bergdoll <lukas.bergdoll@gmail.com>"]
 
 [dependencies]
-rand = "0.5.1"
 fnv = "1.0.3"
+fxhash = "0.2.1"
 murmur3 = "0.4.1"
+rand = "0.5.1"
 
 [features]
 default = ["sip_hash"]
@@ -14,7 +15,8 @@ default = ["sip_hash"]
 
 sip_hash = [] # default rust HashMap hash
 fnv_hash = [] # replace default hash with fnv
-murmur_hash = [] # replace default hash with fnv
+fx_hash = [] # replace default hash with fx
+murmur_hash = [] # replace default hash with murmur3
 reserve_hm = [] # reserve after creating hash map
 string_key = [] # use string as key type
 string_value = [] # use string as value type

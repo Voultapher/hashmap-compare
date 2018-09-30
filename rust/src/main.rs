@@ -1,6 +1,7 @@
 #![feature(test)]
 
 extern crate fnv;
+extern crate fxhash;
 extern crate murmur3;
 extern crate rand;
 extern crate test;
@@ -11,17 +12,25 @@ use rand::{Rng, thread_rng};
 
 #[cfg(feature = "fnv_hash")] use fnv::FnvBuildHasher;
 
+#[cfg(feature = "fx_hash")] use fxhash::FxBuildHasher;
+
 #[cfg(feature = "murmur_hash")] use std::hash::BuildHasherDefault;
 #[cfg(feature = "murmur_hash")] use murmur3::murmur3_32::MurmurHasher;
-
 
 #[cfg(feature = "fnv_hash")]
 pub type HashMapT<K, V> = HashMap<K, V, FnvBuildHasher>;
 
+#[cfg(feature = "fx_hash")]
+pub type HashMapT<K, V> = HashMap<K, V, FxBuildHasher>;
+
 #[cfg(feature = "murmur_hash")]
 pub type HashMapT<K, V> = HashMap<K, V,  BuildHasherDefault<MurmurHasher>>;
 
-#[cfg(not(any(feature = "fnv_hash", feature = "murmur_hash")))]
+#[cfg(not(any(
+    feature = "fnv_hash",
+    feature = "murmur_hash",
+    feature = "fx_hash"
+)))]
 pub type HashMapT<K, V> = HashMap<K, V>;
 
 #[derive(Clone, PartialEq, PartialOrd, Eq, Ord, Hash)]

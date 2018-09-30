@@ -40,6 +40,7 @@ function benchmark_rust() {
 
   rust_with_hash "sip_hash"
   rust_with_hash "fnv_hash"
+  rust_with_hash "fx_hash"
   rust_with_hash "murmur_hash"
 
   printf "\n"
