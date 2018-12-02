@@ -6,6 +6,7 @@ authors = ["Lukas Bergdoll <lukas.bergdoll@gmail.com>"]
 [dependencies]
 fnv = "1.0.3"
 fxhash = "0.2.1"
+hashbrown = "0.1"
 murmur3 = "0.4.1"
 rand = "0.5.1"
 
@@ -17,6 +18,8 @@ sip_hash = [] # default rust HashMap hash
 fnv_hash = [] # replace default hash with fnv
 fx_hash = [] # replace default hash with fx
 murmur_hash = [] # replace default hash with murmur3
+bytell_map = [] # custom hash map implementation
+hashbrown_map = [] # hashbrown hash map implementation
 reserve_hm = [] # reserve after creating hash map
 string_key = [] # use string as key type
 string_value = [] # use string as value type

@@ -2,6 +2,7 @@
 
 extern crate fnv;
 extern crate fxhash;
+extern crate hashbrown;
 extern crate murmur3;
 extern crate rand;
 extern crate test;
@@ -26,10 +27,14 @@ pub type HashMapT<K, V> = HashMap<K, V, FxBuildHasher>;
 #[cfg(feature = "murmur_hash")]
 pub type HashMapT<K, V> = HashMap<K, V,  BuildHasherDefault<MurmurHasher>>;
 
+#[cfg(feature = "hashbrown_map")]
+pub type HashMapT<K, V> = hashbrown::HashMap<K, V>;
+
 #[cfg(not(any(
     feature = "fnv_hash",
     feature = "murmur_hash",
-    feature = "fx_hash"
+    feature = "fx_hash",
+    feature = "hashbrown_map"
 )))]
 pub type HashMapT<K, V> = HashMap<K, V>;
 
