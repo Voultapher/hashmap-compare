@@ -155,6 +155,15 @@ pub fn fill_linear_n_copy_element_wise(n: i32) -> i32 {
     hm_copy.len() as i32
 }
 
+// TODO add this benchmark to the other languages.
+pub fn fill_linear_n_clone(n: i32) -> i32 {
+    let hm = fill_linear_n(n);
+
+    let hm_copy = hm.clone();
+
+    hm_copy.len() as i32
+}
+
 pub fn fill_linear_n_traversal(n: i32) -> i32 {
     let hm = fill_linear_n(n);
 
@@ -234,6 +243,7 @@ mod tests {
         insert_random: fill_linear_n_insert_random,
         traversal: fill_linear_n_traversal,
         copy_element_wise: fill_linear_n_copy_element_wise,
+        clone: fill_linear_n_clone,
         random_gen: random_gen_only
     }
 }
