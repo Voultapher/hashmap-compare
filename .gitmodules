@@ -1,3 +1,6 @@
 [submodule "cpp/submodules/benchmark"]
 	path = cpp/submodules/benchmark
 	url = https://github.com/google/benchmark.git
+[submodule "cpp/submodules/abseil-cpp"]
+	path = cpp/submodules/abseil-cpp
+	url = https://github.com/abseil/abseil-cpp.git

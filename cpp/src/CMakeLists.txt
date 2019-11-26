@@ -7,6 +7,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
   benchmark_main
+  absl::flat_hash_map
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC

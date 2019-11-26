@@ -4,6 +4,11 @@
 
 #include <benchmark/benchmark.h>
 
+#include <absl/container/flat_hash_map.h>
+
+#include <bytell_hash_map.hpp>
+#include <flat_hash_map.hpp>
+
 using KeyT = int32_t;
 using ValueT = int32_t;
 
@@ -11,6 +16,9 @@ thread_local static std::random_device rd;
 thread_local static std::mt19937 thread_rng(rd());
 
 template<typename K, typename V> using HashMapT = std::unordered_map<K, V>;
+//template<typename K, typename V> using HashMapT = ska::bytell_hash_map<K, V>;
+//template<typename K, typename V> using HashMapT = absl::flat_hash_map<K, V>;
+
 
 static auto fill_linear_n(const int32_t n) -> HashMapT<KeyT, ValueT>
 {
